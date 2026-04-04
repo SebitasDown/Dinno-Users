@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/users/profile")
+@RequestMapping("/users/profile")
 @RequiredArgsConstructor
 public class UserProfileController {
 
@@ -28,8 +28,11 @@ public class UserProfileController {
     private final UserProfileWebMapper mapper;
 
     @GetMapping
-    public Mono<ResponseEntity<UserProfileResponse>> getProfile(@RequestHeader("X-User-Id") UUID userId) {
-        return getProfileUseCase.execute(userId)
+    public Mono<ResponseEntity<UserProfileResponse>> getProfile(
+            @RequestHeader("X-User-Id") UUID userId,
+            @RequestHeader(value = "X-User-Email", required = false) String email
+    ) {
+        return getProfileUseCase.execute(userId, email)
                 .map(mapper::toResponse)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

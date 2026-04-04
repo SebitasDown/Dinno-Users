@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 public interface GetProfileUseCase {
-    Mono<UserProfile> execute(UUID userId);
+    Mono<UserProfile> execute(UUID userId, String email);
 }

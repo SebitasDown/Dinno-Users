@@ -22,10 +22,16 @@ public class GetProfileService implements GetProfileUseCase {
     }
 
     @Override
-    public Mono<UserProfile> execute(UUID userId) {
+    public Mono<UserProfile> execute(UUID userId, String email) {
         log.info("Fetching profile for user ID: {}", userId);
         return repository.findByUserId(userId)
-                .switchIfEmpty(Mono.error(new ProfileNotFoundException("Profile not found for userId: " + userId)))
+                .switchIfEmpty(Mono.defer(() -> {
+                    log.info("Profile not found, creating default for user ID: {}", userId);
+                    UserProfile profile = new UserProfile();
+                    profile.setUserId(userId);
+                    profile.setFullName(email);
+                    return repository.save(profile);
+                }))
                 .doOnSuccess(profile -> log.info("Successfully fetched profile for user ID: {}", userId))
                 .doOnError(e -> log.error("Error occurred while fetching profile for user ID: {}", userId, e));
     }

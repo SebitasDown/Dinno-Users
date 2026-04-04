@@ -8,8 +8,8 @@ public class UserProfile {
     private String fullName;
     private String bio;
     private String profilePictureUrl;
-    private Boolean notificationsEnabled;
-    private Boolean darkMode;
+    private Boolean notificationsEnabled = true;
+    private Boolean darkMode = false;
     private LocalDateTime updateAt;
 
     public UserProfile() {

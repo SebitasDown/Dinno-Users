@@ -25,9 +25,12 @@ public class UserProfileRepositoryAdapter implements UserProfileRepository {
 
     @Override
     public Mono<UserProfile> save(UserProfile profile) {
-        return Mono.just(profile)
-                .map(mapper::toEntity)
-                .flatMap(repository::save)
+        return repository.existsById(profile.getUserId())
+                .flatMap(exists -> {
+                    var entity = mapper.toEntity(profile);
+                    entity.setNewProfile(!exists);
+                    return repository.save(entity);
+                })
                 .map(mapper::toModel);
     }
 
