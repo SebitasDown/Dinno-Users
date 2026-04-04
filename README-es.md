@@ -1,4 +1,4 @@
-# DInno - Microservicio de Usuarios
+# Dinno - Microservicio de Usuarios
 
 **Dinno-Users** es el microservicio central encargado de la gestión de los perfiles de usuario dentro del ecosistema **DInno**. Construido sobre un entorno reactivo completo, este servicio está preparado para soportar peticiones de alta afluencia mientras administra la información de perfil, preferencias de interfaz y configuraciones de notificaciones.
 
