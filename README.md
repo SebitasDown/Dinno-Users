@@ -1,4 +1,4 @@
-# DInno - Users Microservice
+# Dinno - Users Microservice
 
 **Dinno-Users** is the core user profile management microservice within the **DInno** ecosystem. Built on a fully reactive stack, this service natively handles high-concurrency requests while serving user profile data, application preferences, and notification settings.
 
