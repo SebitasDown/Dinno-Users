@@ -17,53 +17,49 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/users/profile")
+@RequestMapping("/api/users/profile")
 @RequiredArgsConstructor
 public class UserProfileController {
 
-    private final GetProfileUseCase getProfileUseCase;
-    private final UpdateProfileUseCase updateProfileUseCase;
-    private final UpdateAppearanceUseCase updateAppearanceUseCase;
-    private final UpdateNotificationsUseCase updateNotificationsUseCase;
-    private final UserProfileWebMapper mapper;
+        private final GetProfileUseCase getProfileUseCase;
+        private final UpdateProfileUseCase updateProfileUseCase;
+        private final UpdateAppearanceUseCase updateAppearanceUseCase;
+        private final UpdateNotificationsUseCase updateNotificationsUseCase;
+        private final UserProfileWebMapper mapper;
 
-    @GetMapping
-    public Mono<ResponseEntity<UserProfileResponse>> getProfile(
-            @RequestHeader("X-User-Id") UUID userId,
-            @RequestHeader(value = "X-User-Email", required = false) String email
-    ) {
-        return getProfileUseCase.execute(userId, email)
-                .map(mapper::toResponse)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
-    }
+        @GetMapping
+        public Mono<ResponseEntity<UserProfileResponse>> getProfile(
+                        @RequestHeader("X-User-Id") UUID userId,
+                        @RequestHeader(value = "X-User-Email", required = false) String email) {
+                return getProfileUseCase.execute(userId, email)
+                                .map(mapper::toResponse)
+                                .map(ResponseEntity::ok)
+                                .defaultIfEmpty(ResponseEntity.notFound().build());
+        }
 
-    @PutMapping
-    public Mono<ResponseEntity<UserProfileResponse>> updateProfile(
-            @RequestHeader("X-User-Id") UUID userId,
-            @RequestBody UpdateProfileRequest request
-    ) {
-        return updateProfileUseCase.execute(mapper.toCommand(request, userId))
-                .map(mapper::toResponse)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
-    }
+        @PutMapping
+        public Mono<ResponseEntity<UserProfileResponse>> updateProfile(
+                        @RequestHeader("X-User-Id") UUID userId,
+                        @RequestBody UpdateProfileRequest request) {
+                return updateProfileUseCase.execute(mapper.toCommand(request, userId))
+                                .map(mapper::toResponse)
+                                .map(ResponseEntity::ok)
+                                .defaultIfEmpty(ResponseEntity.notFound().build());
+        }
 
-    @PatchMapping("/appearance")
-    public Mono<ResponseEntity<Void>> updateAppearance(
-            @RequestHeader("X-User-Id") UUID userId,
-            @RequestBody UpdateAppearanceRequest request
-    ) {
-        return updateAppearanceUseCase.execute(mapper.toAppearanceCommand(request, userId))
-                .then(Mono.just(ResponseEntity.noContent().build()));
-    }
+        @PatchMapping("/appearance")
+        public Mono<ResponseEntity<Void>> updateAppearance(
+                        @RequestHeader("X-User-Id") UUID userId,
+                        @RequestBody UpdateAppearanceRequest request) {
+                return updateAppearanceUseCase.execute(mapper.toAppearanceCommand(request, userId))
+                                .then(Mono.just(ResponseEntity.noContent().build()));
+        }
 
-    @PatchMapping("/notifications")
-    public Mono<ResponseEntity<Void>> updateNotifications(
-            @RequestHeader("X-User-Id") UUID userId,
-            @RequestBody UpdateNotificationsRequest request
-    ) {
-        return updateNotificationsUseCase.execute(mapper.toNotificationsCommand(request, userId))
-                .then(Mono.just(ResponseEntity.noContent().build()));
-    }
+        @PatchMapping("/notifications")
+        public Mono<ResponseEntity<Void>> updateNotifications(
+                        @RequestHeader("X-User-Id") UUID userId,
+                        @RequestBody UpdateNotificationsRequest request) {
+                return updateNotificationsUseCase.execute(mapper.toNotificationsCommand(request, userId))
+                                .then(Mono.just(ResponseEntity.noContent().build()));
+        }
 }
