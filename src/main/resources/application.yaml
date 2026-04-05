@@ -28,7 +28,6 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
   instance:
-
     prefer-ip-address: true
-   
+
     lease-renewal-interval-in-seconds: 30
