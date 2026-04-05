@@ -25,7 +25,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
   instance:
-
-    prefer-ip-address: true
-   
+    prefer-ip-address: false
+    hostname: ${RENDER_EXTERNAL_HOSTNAME:localhost}
+    non-secure-port: 80
     lease-renewal-interval-in-seconds: 30
