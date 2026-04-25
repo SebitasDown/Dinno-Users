@@ -1,16 +1,15 @@
 package com.dinno.Users.infrastructure.port.in.web.controller;
 
-import com.dinno.Users.domain.port.in.GetProfileUseCase;
-import com.dinno.Users.domain.port.in.UpdateAppearanceUseCase;
-import com.dinno.Users.domain.port.in.UpdateNotificationsUseCase;
-import com.dinno.Users.domain.port.in.UpdateProfileUseCase;
+import com.dinno.Users.domain.port.in.*;
 import com.dinno.Users.infrastructure.port.in.web.dto.request.UpdateAppearanceRequest;
 import com.dinno.Users.infrastructure.port.in.web.dto.request.UpdateNotificationsRequest;
 import com.dinno.Users.infrastructure.port.in.web.dto.request.UpdateProfileRequest;
 import com.dinno.Users.infrastructure.port.in.web.dto.response.UserProfileResponse;
 import com.dinno.Users.infrastructure.port.in.web.mapper.UserProfileWebMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -25,6 +24,7 @@ public class UserProfileController {
         private final UpdateProfileUseCase updateProfileUseCase;
         private final UpdateAppearanceUseCase updateAppearanceUseCase;
         private final UpdateNotificationsUseCase updateNotificationsUseCase;
+        private final UpdateProfilePictureUseCase updateProfilePictureUseCase;
         private final UserProfileWebMapper mapper;
 
         @GetMapping
@@ -32,7 +32,12 @@ public class UserProfileController {
                         @RequestHeader("X-User-Id") UUID userId,
                         @RequestHeader(value = "X-User-Email", required = false) String email) {
                 return getProfileUseCase.execute(userId, email)
-                                .map(mapper::toResponse)
+                                .map(profile -> {
+                                    if (profile.getProfilePictureUrl() == null) {
+                                        profile.setProfilePictureUrl("https://res.cloudinary.com/demo/image/upload/d_avatar.png/v1/avatar.png");
+                                    }
+                                    return mapper.toResponse(profile);
+                                })
                                 .map(ResponseEntity::ok)
                                 .defaultIfEmpty(ResponseEntity.notFound().build());
         }
@@ -45,6 +50,15 @@ public class UserProfileController {
                                 .map(mapper::toResponse)
                                 .map(ResponseEntity::ok)
                                 .defaultIfEmpty(ResponseEntity.notFound().build());
+        }
+
+        @PatchMapping(value = "/picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public Mono<ResponseEntity<UserProfileResponse>> updateProfilePicture(
+                        @RequestHeader("X-User-Id") UUID userId,
+                        @RequestPart("file") Mono<FilePart> filePartMono) {
+                return filePartMono.flatMap(filePart -> updateProfilePictureUseCase.execute(userId, filePart))
+                                .map(mapper::toResponse)
+                                .map(ResponseEntity::ok);
         }
 
         @PatchMapping("/appearance")

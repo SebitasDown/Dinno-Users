@@ -1,7 +1,6 @@
 package com.dinno.Users.infrastructure.exception;
 
-import com.dinno.Users.domain.exception.BusinessRuleValidationException;
-import com.dinno.Users.domain.exception.ResourceNotFoundException;
+import com.dinno.Users.domain.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +23,27 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleBusinessRuleValidationException(BusinessRuleValidationException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problemDetail.setTitle("Business Rule Violation");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(InvalidFileTypeException.class)
+    public ProblemDetail handleInvalidFileTypeException(InvalidFileTypeException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage());
+        problemDetail.setTitle("Invalid File Type");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(FileSizeExceededException.class)
+    public ProblemDetail handleFileSizeExceededException(FileSizeExceededException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problemDetail.setTitle("File Size Too Large");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(FileTooSmallException.class)
+    public ProblemDetail handleFileTooSmallException(FileTooSmallException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setTitle("File Too Small");
         return problemDetail;
     }
 
